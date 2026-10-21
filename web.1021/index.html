@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>大樂透自動選號與對獎系統（Lotto）</title>
+</head>
+<body>
+
+    <h1>資三乙董晏銘_大樂透自動選號與對獎系統</h1>
+    
+    <script>
+        let userNumbers = [];
+        let winningNumbers = [];
+    </script>
+    <hr>
+    <h3>1. 我的彩券號碼</h3>
+   
+    <p id="my-numbers">請點擊下方按鈕進行選號</p>
+    
+    
+    <button onclick="
+        userNumbers = [];
+        while (userNumbers.length < 6) {
+            let randNum = Math.floor(Math.random() * 49) + 1;
+            if (!userNumbers.includes(randNum)) {
+                userNumbers.push(randNum);
+            }
+        }
+        userNumbers.sort((a, b) => a - b);
+        document.getElementById('my-numbers').innerText = '我的號碼：' + userNumbers.join(', ');
+    ">🎲 自動選號</button>
+
+    <hr>
+
+    
+    <h3>2. 本期開獎號碼</h3>
+   
+    <p id="draw-numbers">等待開獎中...</p>
+    
+    <button onclick="
+        winningNumbers = [];
+        while (winningNumbers.length < 6) {
+            let randNum = Math.floor(Math.random() * 49) + 1;
+            if (!winningNumbers.includes(randNum)) {
+                winningNumbers.push(randNum);
+            }
+        }
+        winningNumbers.sort((a, b) => a - b);
+        document.getElementById('draw-numbers').innerText = '開獎號碼：' + winningNumbers.join(', ');
+    "> 開始開獎</button>
+
+    <hr>
+
+   
+    <h3>3. 對獎結果</h3>
+    <button onclick="
+        if (userNumbers.length === 0 || winningNumbers.length === 0) {
+            alert('請先點擊「自動選號」與「開始開獎」！');
+        } else {
+            let matchCount = 0;
+            let matchedList = [];
+            
+          
+            for (let i = 0; i < userNumbers.length; i++) {
+                if (winningNumbers.includes(userNumbers[i])) {
+                    matchCount++;
+                    matchedList.push(userNumbers[i]);
+                }
+            }
+
+            let resultText = '對中 ' + matchCount + ' 個號碼👎';
+            if (matchCount > 0) {
+                resultText += '（對中號碼：' + matchedList.join(', ') + '）';
+            }
+
+            document.getElementById('result-text').innerText = resultText;
+        }
+    ">🐽進行對獎🐽</button>
+    <p id="result-text" style="font-weight: bold;"></p>
+
+</body>
+</html>
