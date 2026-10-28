@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>燈泡開關</title>
+  <style>
+    body {
+      background-color: #eef4ff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 30px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    #gameStatus {
+      min-height: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <h1>資訊三乙 董晏銘</h1>
+  <h2>燈泡開關</h2>
+
+  <img id="myImage" src="pic/pic_bulboff.gif" width="100" height="180" alt="燈泡">
+
+  <p id="status">目前狀態：關閉</p>
+
+  <button onclick="light(1)">開燈</button>
+  <button onclick="light(0)">關燈</button>
+
+  <p>切換次數：<span id="count">0</span></p>
+
+  <section aria-labelledby="gameTitle">
+    <h2 id="gameTitle">記憶遊戲</h2>
+    <p>記住燈泡是開還是關，再按一次相同按鈕。</p>
+    <p>答對次數：<span id="score">0</span></p>
+    <p id="gameStatus" aria-live="polite">按下「開始遊戲」開始挑戰。</p>
+    <button id="startGame" onclick="startGame()">開始遊戲</button>
+  </section>
+
+  <script>
+    var isOn = false;
+    var count = 0;
+    var answer;
+    var score = 0;
+    var gameActive = false;
+    var showingAnswer = false;
+
+    function light(sw) {
+      setLight(sw);
+      if (!gameActive || showingAnswer) {
+        return;
+      }
+
+      if (sw !== answer) {
+        gameActive = false;
+        setControlsDisabled(true);
+        document.getElementById("gameStatus").textContent =
+          "答錯了！你答對 " + score + " 次，按下「重新開始」再挑戰。";
+        document.getElementById("startGame").textContent = "重新開始";
+        document.getElementById("startGame").disabled = false;
+      } else {
+        score++;
+        document.getElementById("score").textContent = score;
+        document.getElementById("gameStatus").textContent = "答對了！準備下一題……";
+        setControlsDisabled(true);
+        window.setTimeout(nextRound, 900);
+      }
+    }
+
+    function setLight(sw) {
+      var isSwitchingOn = sw === 1;
+      if (isOn !== isSwitchingOn) {
+        count++;
+        document.getElementById("count").textContent = count;
+      }
+
+      document.getElementById("myImage").src = isSwitchingOn
+        ? "pic/pic_bulbon.gif"
+        : "pic/pic_bulboff.gif";
+      document.getElementById("status").textContent = isSwitchingOn
+        ? "目前狀態：開啟"
+        : "目前狀態：關閉";
+      isOn = isSwitchingOn;
+    }
+
+    function startGame() {
+      score = 0;
+      gameActive = true;
+      document.getElementById("score").textContent = score;
+      document.getElementById("startGame").textContent = "遊戲進行中";
+      document.getElementById("startGame").disabled = true;
+      nextRound();
+    }
+
+    function nextRound() {
+      answer = Math.random() < 0.5 ? 1 : 0;
+      showingAnswer = true;
+      setControlsDisabled(true);
+      document.getElementById("gameStatus").textContent = "請記住燈泡狀態！";
+      setLight(answer);
+      window.setTimeout(function () {
+        setLight(0);
+        showingAnswer = false;
+        setControlsDisabled(false);
+        document.getElementById("gameStatus").textContent = "換你了！按開燈或關燈作答。";
+      }, 900);
+    }
+
+    function setControlsDisabled(disabled) {
+      var buttons = document.querySelectorAll("body > button");
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = disabled;
+      }
+    }
+  </script>
+</body>
+</html>
